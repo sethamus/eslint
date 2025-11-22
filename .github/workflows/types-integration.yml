@@ -1,9 +1,9 @@
 name: CI
 on:
     push:
-        branches: [main]
+        branches: [sethamus-patch-1]
     pull_request:
-        branches: [main]
+        branches: [sethamus-patch-1]
 
 permissions:
     contents: read
@@ -177,6 +177,37 @@ jobs:
             - name: Run TSC
               working-directory: json
               run: npm run test:types
+
+    html_plugin:
+        name: Types (@html-eslint/eslint-plugin)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout eslint
+              uses: actions/checkout@v5
+              with:
+                  path: eslint
+
+            - name: Checkout @html-eslint/eslint-plugin
+              uses: actions/checkout@v5
+              with:
+                  repository: yeonjuan/html-eslint
+                  path: html-eslint
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: "lts/*"
+
+            - name: Install Packages (eslint)
+              working-directory: eslint
+              run: npm install
+
+            - name: Install Packages (@html-eslint/eslint-plugin)
+              working-directory: html-eslint/packages/eslint-plugin
+              run: npm install --legacy-peer-deps ../../../eslint
+
+            - name: Run TSC
+              working-directory: html-eslint/packages/eslint-plugin
+              run: npm run ts
 
     are-the-types-wrong:
         name: Are the types wrong?
