@@ -178,7 +178,7 @@ jobs:
               working-directory: json
               run: npm run test:types
 
-    html_plugin:
+    html_eslint_plugin:
         name: Types (@html-eslint/eslint-plugin)
         runs-on: ubuntu-latest
         steps:
