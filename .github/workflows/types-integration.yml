@@ -212,8 +212,8 @@ jobs:
             - name: Update package.json @html-eslint/eslint-plugin
               uses: restackio/update-json-file-action@2.1
               with:
-                  file: html-eslint/packages/eslint-plugin/package.json
-                  fields: '{"scripts.ts": "eslint --version && tsc --noEmit"}'
+                  file: package.json
+                  fields: '{"scripts.check-eslint-version": "eslint -v", "check:ts": "yarn check-eslint-version && turbo run ts --filter=@html-eslint/eslint-plugin"}'
 
             - name: Run TSC
               working-directory: html-eslint
