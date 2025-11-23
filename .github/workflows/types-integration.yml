@@ -207,7 +207,7 @@ jobs:
 
             - name: Install Packages (@html-eslint/eslint-plugin)
               working-directory: html-eslint/packages/eslint-plugin
-              run: yarn add ../../../eslint
+              run: yarn add ../../../eslint -D
 
             - name: Update package.json @html-eslint/eslint-plugin
               uses: restackio/update-json-file-action@2.1
