@@ -216,8 +216,8 @@ jobs:
                   fields: '{"scripts.check-eslint-version": "eslint -v", "scripts.ts": "yarn check-eslint-version && tsc --noEmit"}'
 
             - name: Run TSC
-              working-directory: html-eslint
-              run: yarn check:ts --filter=@html-eslint/eslint-plugin
+              working-directory: html-eslint/packages/eslint-plugin
+              run: yarn ts
 
     are-the-types-wrong:
         name: Are the types wrong?
