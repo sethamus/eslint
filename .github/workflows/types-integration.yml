@@ -201,13 +201,17 @@ jobs:
               working-directory: eslint
               run: npm install
 
+            - name: Install Packages (html-eslint)
+              working-directory: html-eslint
+              run: yarn install
+
             - name: Install Packages (@html-eslint/eslint-plugin)
               working-directory: html-eslint
-              run: npm install --legacy-peer-deps
+              run: yarn add ../eslint
 
             - name: Run TSC
               working-directory: html-eslint
-              run: npm run check:ts -- --filter=@html-eslint/eslint-plugin
+              run: yarn check:ts --filter=@html-eslint/eslint-plugin
 
     are-the-types-wrong:
         name: Are the types wrong?
