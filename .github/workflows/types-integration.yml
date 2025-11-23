@@ -217,7 +217,9 @@ jobs:
 
             - name: Run TSC
               working-directory: html-eslint/packages/eslint-plugin
-              run: yarn ts
+              run: |
+                  yarn build
+                  yarn ts
 
     are-the-types-wrong:
         name: Are the types wrong?
