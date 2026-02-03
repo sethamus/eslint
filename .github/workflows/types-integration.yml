@@ -209,7 +209,7 @@ jobs:
 
             - name: Install Packages (html-eslint)
               working-directory: html-eslint
-              run: yarn install
+              run: yarn install --immutable=false
 
             - name: Run TSC
               working-directory: html-eslint
