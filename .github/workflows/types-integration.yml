@@ -204,7 +204,7 @@ jobs:
             - name: Patch html-eslint package.json to use local eslint
               uses: restackio/update-json-file-action@2.1
               with:
-                  file_path: html-eslint/package.json
+                  file: html-eslint/package.json
                   fields: '{"resolutions.eslint":"file:../eslint"}'
 
             - name: Install Packages (html-eslint)
