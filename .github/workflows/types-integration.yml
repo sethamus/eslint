@@ -1,9 +1,9 @@
 name: CI
 on:
     push:
-        branches: [main]
+        branches: [sethamus-patch-1]
     pull_request:
-        branches: [main]
+        branches: [sethamus-patch-1]
 
 permissions:
     contents: read
