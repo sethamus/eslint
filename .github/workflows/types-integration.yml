@@ -203,7 +203,7 @@ jobs:
 
             - name: Install Packages (html-eslint)
               working-directory: html-eslint
-              run: yarn install
+              run: npm install
 
             - name: Add local eslint to @html-eslint/eslint-plugin
               working-directory: html-eslint/packages/eslint-plugin
