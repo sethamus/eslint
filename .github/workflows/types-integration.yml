@@ -192,6 +192,7 @@ jobs:
               with:
                   repository: yeonjuan/html-eslint
                   path: html-eslint
+                  ref: v0.54.0
 
             - uses: actions/setup-node@v6
               with:
