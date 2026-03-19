@@ -90,7 +90,7 @@
       "markdownlint-cli2 --fix",
       "prettier --write"
     ],
-    "!({**/*.js,**/*.json,**/*.jsonc,**/*.json5,**/*.yml,**/*.yaml,docs/src/**/*.md})": "prettier --write --ignore-unknown",
+    "!({{*.,**/*.}{js,json,jsonc,json5,yml,yaml},docs/src/**/*.md})": "prettier --write --ignore-unknown",
     "lib/rules/*.js": [
       "node tools/update-eslint-all.js",
       "node tools/update-eslint-recommended.js",
