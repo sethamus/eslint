@@ -518,11 +518,18 @@ ruleTesterTypeScript.run("no-var", rule, {
 	valid: ["declare global { var bar: 'car' }"],
 	invalid: [
 		{
+			code: "declare var x: number",
+			output: "declare let x: number",
+			errors: [{ messageId: "unexpectedVar" }],
+		},
+		{
 			code: "declare namespace ns { var bar: 'car' }",
+			output: "declare namespace ns { let bar: 'car' }",
 			errors: [{ messageId: "unexpectedVar" }],
 		},
 		{
 			code: "declare module 'module' { var bar: 'car' }",
+			output: "declare module 'module' { let bar: 'car' }",
 			errors: [{ messageId: "unexpectedVar" }],
 		},
 	],
