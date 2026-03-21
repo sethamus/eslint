@@ -3041,15 +3041,32 @@ describe("FlatConfigArray", () => {
 				"reportUnusedDisableDirectives",
 				"root",
 			].forEach(key => {
-				it(`should error when a ${key} key is found`, async () => {
-					await assertInvalidConfig(
-						[
-							{
-								[key]: "foo",
-							},
-						],
-						`Key "${key}": This appears to be in eslintrc format rather than flat config format.`,
-					);
+				it(`should error when a ${key} key is found`, () => {
+					const configs = createFlatConfigArray([
+						{
+							[key]: "foo",
+						},
+					]);
+
+					try {
+						configs.normalizeSync();
+						configs.getConfig("foo.js");
+					} catch (error) {
+						assert.include(
+							error.message,
+							`Key "${key}": This appears to be in eslintrc format rather than flat config format.`,
+						);
+						assert.strictEqual(
+							error.messageTemplate,
+							"eslintrc-incompat",
+						);
+						assert.deepStrictEqual(error.messageData, {
+							key,
+						});
+						return;
+					}
+
+					assert.fail("Expected an error to be thrown");
 				});
 			});
 
