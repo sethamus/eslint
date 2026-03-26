@@ -116,7 +116,7 @@ jobs:
 
         strategy:
             matrix:
-                typescript: ["5.x", "5.3.2"]
+                typescript: ["6.x", "5.x", "5.3.2"]
                 package:
                     [
                         { name: eslint, directory: . },
