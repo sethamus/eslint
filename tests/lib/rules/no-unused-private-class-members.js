@@ -18,20 +18,6 @@ const rule = require("../../../lib/rules/no-unused-private-class-members"),
 
 const ruleTester = new RuleTester({ languageOptions: { ecmaVersion: 2022 } });
 
-/**
- * Returns an expected error for defined-but-not-used private class member.
- * @param {string} classMemberName The name of the class member
- * @returns {Object} An expected error object
- */
-function definedError(classMemberName) {
-	return {
-		messageId: "unusedPrivateClassMember",
-		data: {
-			classMemberName: `#${classMemberName}`,
-		},
-	};
-}
-
 ruleTester.run("no-unused-private-class-members", rule, {
 	valid: [
 		"class Foo {}",
@@ -184,21 +170,198 @@ ruleTester.run("no-unused-private-class-members", rule, {
 			code: `class Foo {
     #unusedMember = 5;
 }`,
-			errors: [definedError("unusedMember")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    /** docs */
+    #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    // remove me
+    #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    #unusedMember = 1; // trailing
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    foo = 1; // keep this
+    #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+    foo = 1; // keep this
+}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class First {}
 class Second {
     #unusedMemberInSecondClass = 5;
 }`,
-			errors: [definedError("unusedMemberInSecondClass")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMemberInSecondClass",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 31,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMemberInSecondClass",
+							},
+							output: `class First {}
+class Second {
+}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class First {
     #unusedMemberInFirstClass = 5;
 }
 class Second {}`,
-			errors: [definedError("unusedMemberInFirstClass")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMemberInFirstClass",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 30,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMemberInFirstClass",
+							},
+							output: `class First {
+}
+class Second {}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class First {
@@ -206,8 +369,50 @@ class Second {}`,
     #secondUnusedMemberInSameClass = 5;
 }`,
 			errors: [
-				definedError("firstUnusedMemberInSameClass"),
-				definedError("secondUnusedMemberInSameClass"),
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#firstUnusedMemberInSameClass",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 34,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName:
+									"#firstUnusedMemberInSameClass",
+							},
+							output: `class First {
+    #secondUnusedMemberInSameClass = 5;
+}`,
+						},
+					],
+				},
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#secondUnusedMemberInSameClass",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 35,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName:
+									"#secondUnusedMemberInSameClass",
+							},
+							output: `class First {
+    #firstUnusedMemberInSameClass = 5;
+}`,
+						},
+					],
+				},
 			],
 		},
 		{
@@ -217,7 +422,18 @@ class Second {}`,
         this.#usedOnlyInWrite = 42;
     }
 }`,
-			errors: [definedError("usedOnlyInWrite")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#usedOnlyInWrite",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 21,
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -226,7 +442,18 @@ class Second {}`,
         this.#usedOnlyInWriteStatement += 42;
     }
 }`,
-			errors: [definedError("usedOnlyInWriteStatement")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#usedOnlyInWriteStatement",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 30,
+				},
+			],
 		},
 		{
 			code: `class C {
@@ -236,7 +463,18 @@ class Second {}`,
         this.#usedOnlyInIncrement++;
     }
 }`,
-			errors: [definedError("usedOnlyInIncrement")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#usedOnlyInIncrement",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 25,
+				},
+			],
 		},
 		{
 			code: `class C {
@@ -252,7 +490,37 @@ class Second {}`,
         };
     }
 }`,
-			errors: [definedError("unusedInOuterClass")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedInOuterClass",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 24,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedInOuterClass",
+							},
+							output: `class C {
+    foo() {
+        return class {
+            #unusedInOuterClass;
+
+            bar() {
+                return this.#unusedInOuterClass;
+            }
+        };
+    }
+}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class C {
@@ -278,7 +546,49 @@ class Second {}`,
         }
     }
 }`,
-			errors: [definedError("unusedOnlyInSecondNestedClass")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedOnlyInSecondNestedClass",
+					},
+					line: 20,
+					column: 13,
+					endLine: 20,
+					endColumn: 43,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName:
+									"#unusedOnlyInSecondNestedClass",
+							},
+							output: `class C {
+    #unusedOnlyInSecondNestedClass;
+
+    foo() {
+        return class {
+            #unusedOnlyInSecondNestedClass;
+
+            bar() {
+                return this.#unusedOnlyInSecondNestedClass;
+            }
+        };
+    }
+
+    baz() {
+        return this.#unusedOnlyInSecondNestedClass;
+    }
+
+    bar() {
+        return class {
+        }
+    }
+}`,
+						},
+					],
+				},
+			],
 		},
 
 		//--------------------------------------------------------------------------
@@ -288,7 +598,28 @@ class Second {}`,
 			code: `class Foo {
     #unusedMethod() {}
 }`,
-			errors: [definedError("unusedMethod")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMethod",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMethod",
+							},
+							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -300,13 +631,94 @@ class Second {}`,
         return this.#usedMethod();
     }
 }`,
-			errors: [definedError("unusedMethod")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMethod",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMethod",
+							},
+							output: `class Foo {
+    #usedMethod() {
+        return 42;
+    }
+    publicMethod() {
+        return this.#usedMethod();
+    }
+}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class Foo {
     set #unusedSetter(value) {}
 }`,
-			errors: [definedError("unusedSetter")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedSetter",
+					},
+					line: 2,
+					column: 9,
+					endLine: 2,
+					endColumn: 22,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedSetter",
+							},
+							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    get #unusedAccessor() {
+        return 1;
+    }
+    set #unusedAccessor(value) {}
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedAccessor",
+					},
+					line: 5,
+					column: 9,
+					endLine: 5,
+					endColumn: 24,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedAccessor",
+							},
+							output: `class Foo {
+    get #unusedAccessor() {
+        return 1;
+    }
+}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -317,7 +729,18 @@ class Second {}`,
         }
     }
 }`,
-			errors: [definedError("unusedForInLoop")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedForInLoop",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 21,
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -328,7 +751,18 @@ class Second {}`,
         }
     }
 }`,
-			errors: [definedError("unusedForOfLoop")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedForOfLoop",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 21,
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -337,7 +771,18 @@ class Second {}`,
         ({ x: this.#unusedInDestructuring } = bar);
     }
 }`,
-			errors: [definedError("unusedInDestructuring")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedInDestructuring",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 27,
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -346,7 +791,18 @@ class Second {}`,
         [...this.#unusedInRestPattern] = bar;
     }
 }`,
-			errors: [definedError("unusedInRestPattern")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedInRestPattern",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 25,
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -355,7 +811,18 @@ class Second {}`,
         [this.#unusedInAssignmentPattern = 1] = bar;
     }
 }`,
-			errors: [definedError("unusedInAssignmentPattern")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedInAssignmentPattern",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 31,
+				},
+			],
 		},
 		{
 			code: `class Foo {
@@ -364,7 +831,175 @@ class Second {}`,
         [this.#unusedInAssignmentPattern] = bar;
     }
 }`,
-			errors: [definedError("unusedInAssignmentPattern")],
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedInAssignmentPattern",
+					},
+					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 31,
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    foo = 1
+    #unusedMethod() {}
+    [0]() {}
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMethod",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMethod",
+							},
+							output: `class Foo {
+    foo = 1;
+    [0]() {}
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    foo = 1
+    #unusedMethod() {}
+    *generator() {}
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMethod",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMethod",
+							},
+							output: `class Foo {
+    foo = 1;
+    *generator() {}
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    foo = 1
+    /** docs */
+    #unusedMethod() {}
+    [0]() {}
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMethod",
+					},
+					line: 4,
+					column: 5,
+					endLine: 4,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMethod",
+							},
+							output: `class Foo {
+    foo = 1;
+    [0]() {}
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    // keep
+
+    /** remove */
+    #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 5,
+					column: 5,
+					endLine: 5,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+    // keep
+
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    // maybe unrelated
+
+    #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 4,
+					column: 5,
+					endLine: 4,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+    // maybe unrelated
+
+}`,
+						},
+					],
+				},
+			],
 		},
 		{
 			code: `class C {
@@ -386,8 +1021,38 @@ class Second {}`,
 }`,
 			errors: [
 				{
-					...definedError("usedOnlyInTheSecondInnerClass"),
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#usedOnlyInTheSecondInnerClass",
+					},
 					line: 2,
+					column: 5,
+					endLine: 2,
+					endColumn: 35,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName:
+									"#usedOnlyInTheSecondInnerClass",
+							},
+							output: `class C {
+    method(a) {
+        return class {
+            #usedOnlyInTheSecondInnerClass;
+
+            method2(b) {
+                foo = b.#usedOnlyInTheSecondInnerClass;
+            }
+
+            method3(b) {
+                foo = b.#usedOnlyInTheSecondInnerClass;
+            }
+        }
+    }
+}`,
+						},
+					],
 				},
 			],
 		},
