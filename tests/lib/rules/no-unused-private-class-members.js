@@ -907,6 +907,37 @@ class Second {}`,
 			],
 		},
 		{
+			code: `class C {
+    foo = () => {}
+    #unused
+    [bar]
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unused",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 12,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unused",
+							},
+							output: `class C {
+    foo = () => {}
+    [bar]
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
 			code: `class Foo {
     foo = 1
     /** docs */
