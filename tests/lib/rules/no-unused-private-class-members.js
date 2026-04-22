@@ -251,6 +251,91 @@ ruleTester.run("no-unused-private-class-members", rule, {
 		},
 		{
 			code: `class Foo {
+    /* remove */ #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 2,
+					column: 18,
+					endLine: 2,
+					endColumn: 31,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    /* keep */ #unusedMember = 1; foo = 1
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 2,
+					column: 16,
+					endLine: 2,
+					endColumn: 29,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+    /* keep */ foo = 1
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class C {
+    // comment
+    #unused; foo;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unused",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 12,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unused",
+							},
+							output: `class C {
+    // comment
+    foo;
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
     #unusedMember = 1; // trailing
 }`,
 			errors: [
@@ -270,6 +355,36 @@ ruleTester.run("no-unused-private-class-members", rule, {
 								classMemberName: "#unusedMember",
 							},
 							output: `class Foo {
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    foo = 1; /*
+    */ #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 3,
+					column: 8,
+					endLine: 3,
+					endColumn: 21,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+    foo = 1; /*
+    */ 
 }`,
 						},
 					],
@@ -994,6 +1109,40 @@ class Second {}`,
 							},
 							output: `class Foo {
     // keep
+
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
+			code: `class Foo {
+    // keep one
+    // keep two
+
+    /** remove */
+    #unusedMember = 1;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unusedMember",
+					},
+					line: 6,
+					column: 5,
+					endLine: 6,
+					endColumn: 18,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unusedMember",
+							},
+							output: `class Foo {
+    // keep one
+    // keep two
 
 }`,
 						},
