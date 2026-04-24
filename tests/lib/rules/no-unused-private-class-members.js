@@ -335,6 +335,36 @@ ruleTester.run("no-unused-private-class-members", rule, {
 			],
 		},
 		{
+			code: `class C {
+    // comment
+    #unused; /*
+    */ foo;
+}`,
+			errors: [
+				{
+					messageId: "unusedPrivateClassMember",
+					data: {
+						classMemberName: "#unused",
+					},
+					line: 3,
+					column: 5,
+					endLine: 3,
+					endColumn: 12,
+					suggestions: [
+						{
+							messageId: "removeUnusedPrivateClassMember",
+							data: {
+								classMemberName: "#unused",
+							},
+							output: `class C {
+    foo;
+}`,
+						},
+					],
+				},
+			],
+		},
+		{
 			code: `class Foo {
     #unusedMember = 1; // trailing
 }`,
