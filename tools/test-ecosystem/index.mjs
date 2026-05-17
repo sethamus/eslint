@@ -95,19 +95,14 @@ async function runTests(pluginKey, pluginSettings) {
 	const packageManager = pluginSettings.commands.install[0];
 
 	if (packageManager === "npm") {
-		const packagesToInstall = [process.cwd()];
-
-		if (pluginKey === "eslint-plugin-vue") {
-			packagesToInstall.push("espree@latest");
-		}
-
 		/*
 		 * Use `npm install --no-save` instead of `npm link` to avoid
 		 * creating a global symlink in /usr/local/lib/node_modules/,
 		 * which fails with EACCES on machines where npm is installed
 		 * globally (owned by root).
 		 */
-		runCommand(["npm", "install", "--no-save", ...packagesToInstall]);
+		runCommand(["npm", "install", "--no-save", process.cwd()]);
+		runCommand(["npm", "install", "--no-save", "espree@latest"]);
 	} else {
 		runCommand([packageManager, "link", process.cwd()]);
 	}
