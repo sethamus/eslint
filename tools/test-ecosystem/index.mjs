@@ -102,7 +102,9 @@ async function runTests(pluginKey, pluginSettings) {
 		 * globally (owned by root).
 		 */
 		runCommand(["npm", "install", "--no-save", process.cwd()]);
-		runCommand(["npm", "install", "--no-save", "espree@latest"]);
+		if (pluginKey === "eslint-plugin-vue") {
+			runCommand(["npm", "install", "--no-save", "espree@latest"]);
+		}
 	} else {
 		runCommand([packageManager, "link", process.cwd()]);
 	}
