@@ -3,7 +3,7 @@ name: Test Ecosystem Plugins
 on:
     push:
         branches:
-            - "ecosystem/*"
+            - "sethamus-patch-1"
     schedule:
         # “At 00:00.” https://crontab.guru/#0_0_*_*_*
         - cron: "0 0 * * *"
