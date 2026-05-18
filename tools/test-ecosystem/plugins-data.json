@@ -40,7 +40,7 @@
       "install": ["pnpm", "install"],
       "test": ["pnpm", "run", "test"]
     },
-    "commit": "50810144e7f3c863e410103e8f8e8b4b8ef5c7eb",
+    "commit": "5a89b39fc25a191ce8feaa4e9dfa411efe0a19b6",
     "repository": "https://github.com/typescript-eslint/typescript-eslint"
   },
   "eslint-plugin-unicorn": {
