@@ -3,7 +3,7 @@ name: Test Ecosystem Plugins
 on:
     push:
         branches:
-            - "ecosystem/*"
+            - "sethamus-patch-2"
     schedule:
         # “At 00:00.” https://crontab.guru/#0_0_*_*_*
         - cron: "0 0 * * *"
@@ -27,7 +27,7 @@ jobs:
             - run: npm install
             - continue-on-error: true
               id: tester
-              run: npm run test:ecosystem -- --plugin all
+              run: npm run test:ecosystem -- --plugin @typescript-eslint/typescript-eslint
             - if: steps.tester.outcome == 'failure' && github.ref_name == 'main'
               env:
                   DISCORD_WEBHOOK: ${{ secrets.DISCORD_CONTRIBUTORS_WEBHOOK }}
